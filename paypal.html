@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Reserve Spot</title>
-    <script src="https://www.paypal.com/sdk/js?client-id=AXBSmH4Eei7ybOo9or0r9_JqSGvBz55ER91ezR2BVD3Y1V2VcQIBSgfYihBU7kXnPKEmZWQbrz3KFthx&currency=USD"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AXBSmH4Eei7ybOo9or0r9_JqSGvBz55ER91ezR2BVD3Y1V2VcQIBSgfYihBU7kXnPKEmZWQbrz3KFthx&currency=USD&intent=capture"></script>
     <style>
       html, body {
         margin: 0;
@@ -35,18 +35,11 @@
     <button id="reserve-btn">Reserve Your Spot</button>
 
     <script>
-      paypal.Buttons({
-        fundingSource: paypal.FUNDING.PAYPAL,
-        style: {
-          layout: 'vertical',
-          color: 'gold',
-          shape: 'rect',
-          label: 'paypal'
-        },
+      let paypalButtons = paypal.Buttons({
         createOrder: function (data, actions) {
           return actions.order.create({
             purchase_units: [{
-              amount: { value: '50.00' } // <-- Set your price here
+              amount: { value: '50.00' } // Change to your desired amount
             }]
           });
         },
@@ -55,14 +48,18 @@
             alert('Thanks, ' + details.payer.name.given_name + '! Your spot is reserved.');
           });
         },
-        onCancel: function (data) {
-          alert('You cancelled the transaction.');
-        },
         onError: function (err) {
-          console.error('PayPal error:', err);
-          alert('Something went wrong. Please try again later.');
+          console.error(err);
+          alert('Something went wrong. Please try again.');
         }
-      }).render('#reserve-btn');
+      });
+
+      // Trigger PayPal flow manually when button is clicked
+      document.getElementById('reserve-btn').addEventListener('click', function () {
+        paypalButtons
+          .render(document.createElement('div')) // Render in memory
+          .then(() => paypalButtons.click());
+      });
     </script>
   </body>
 </html>
