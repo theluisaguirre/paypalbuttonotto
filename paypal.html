@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PayPal Button</title>
+    <title>Reserve Spot</title>
     <meta charset="UTF-8" />
     <script src="https://www.paypal.com/sdk/js?client-id=AXBSmH4Eei7ybOo9or0r9_JqSGvBz55ER91ezR2BVD3Y1V2VcQIBSgfYihBU7kXnPKEmZWQbrz3KFthx&currency=USD"></script>
     <style>
@@ -11,25 +11,43 @@
         overflow: hidden;
         width: 100%;
         height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: transparent;
+      }
+
+      #custom-button {
+        background-color: #e0e0e0; /* Light gray to match your design */
+        color: #000;
+        font-size: 16px;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: sans-serif;
+        width: 90%;
+        max-width: 260px;
+      }
+
+      #paypal-button-container {
+        display: none; /* Hide default PayPal button */
       }
     </style>
   </head>
   <body>
+
+    <button id="custom-button">Reserve Your Spot</button>
     <div id="paypal-button-container"></div>
 
     <script>
       paypal.Buttons({
-        style: {
-          layout: 'vertical',
-          color:  'gold',
-          shape:  'rect',
-          label:  'paypal',
-          height: 45
-        },
         createOrder: function (data, actions) {
           return actions.order.create({
             purchase_units: [{
-              amount: { value: '10.00' }
+              amount: {
+                value: '50.00' // Update for truck or trailer option
+              }
             }]
           });
         },
@@ -39,6 +57,12 @@
           });
         }
       }).render('#paypal-button-container');
+
+      // Trigger PayPal flow on custom button click
+      document.getElementById('custom-button').addEventListener('click', function () {
+        document.querySelector('iframe').contentWindow.document.querySelector('button').click();
+      });
     </script>
+
   </body>
 </html>
