@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Reserve Spot</title>
     <meta charset="UTF-8" />
+    <title>Reserve Spot</title>
     <script src="https://www.paypal.com/sdk/js?client-id=AXBSmH4Eei7ybOo9or0r9_JqSGvBz55ER91ezR2BVD3Y1V2VcQIBSgfYihBU7kXnPKEmZWQbrz3KFthx&currency=USD"></script>
     <style>
       html, body {
@@ -17,52 +17,52 @@
         background: transparent;
       }
 
-      #custom-button {
-        background-color: #e0e0e0; /* Light gray to match your design */
+      #reserve-btn {
+        background-color: #e0e0e0;
         color: #000;
         font-size: 16px;
-        padding: 12px 20px;
+        font-family: sans-serif;
+        padding: 14px 24px;
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        font-family: sans-serif;
-        width: 90%;
-        max-width: 260px;
-      }
-
-      #paypal-button-container {
-        display: none; /* Hide default PayPal button */
+        width: 260px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
     </style>
   </head>
   <body>
-
-    <button id="custom-button">Reserve Your Spot</button>
-    <div id="paypal-button-container"></div>
+    <button id="reserve-btn">Reserve Your Spot</button>
 
     <script>
       paypal.Buttons({
+        fundingSource: paypal.FUNDING.PAYPAL,
+        style: {
+          layout: 'vertical',
+          color: 'gold',
+          shape: 'rect',
+          label: 'paypal'
+        },
         createOrder: function (data, actions) {
           return actions.order.create({
             purchase_units: [{
-              amount: {
-                value: '50.00' // Update for truck or trailer option
-              }
+              amount: { value: '50.00' } // <-- Set your price here
             }]
           });
         },
         onApprove: function (data, actions) {
           return actions.order.capture().then(function (details) {
-            alert('Transaction completed by ' + details.payer.name.given_name + '!');
+            alert('Thanks, ' + details.payer.name.given_name + '! Your spot is reserved.');
           });
+        },
+        onCancel: function (data) {
+          alert('You cancelled the transaction.');
+        },
+        onError: function (err) {
+          console.error('PayPal error:', err);
+          alert('Something went wrong. Please try again later.');
         }
-      }).render('#paypal-button-container');
-
-      // Trigger PayPal flow on custom button click
-      document.getElementById('custom-button').addEventListener('click', function () {
-        document.querySelector('iframe').contentWindow.document.querySelector('button').click();
-      });
+      }).render('#reserve-btn');
     </script>
-
   </body>
 </html>
