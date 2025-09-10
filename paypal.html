@@ -8,17 +8,17 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: transparent;
       overflow: hidden;
       width: 100%;
       height: 100%;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      background: transparent;
     }
-
     #paypal-button-container {
-      width: 260px;
+      width: 300px;
+      height: 50px;
     }
   </style>
 </head>
@@ -29,22 +29,28 @@
     paypal.Buttons({
       style: {
         layout: 'vertical',
-        color: 'silver', // closest to gray allowed by PayPal
-        shape: 'pill',   // makes it rounded
-        label: 'pay',    // removes the "PayPal" logo
+        color: 'silver',
+        shape: 'pill',
+        label: 'pay',
         height: 45
       },
-      createOrder: function(data, actions) {
+      createOrder: function (data, actions) {
         return actions.order.create({
           purchase_units: [{
-            amount: { value: '50.00' }
+            amount: {
+              value: '50.00'  // Update to match the product price
+            }
           }]
         });
       },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(function(details) {
+      onApprove: function (data, actions) {
+        return actions.order.capture().then(function (details) {
           alert('Transaction completed by ' + details.payer.name.given_name);
         });
+      },
+      onError: function (err) {
+        console.error('PayPal Checkout error:', err);
+        alert('Something went wrong with your transaction.');
       }
     }).render('#paypal-button-container');
   </script>
